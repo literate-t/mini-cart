@@ -1,4 +1,4 @@
-import { creatElem } from '../util.js';
+import { creatElem, getElem } from '../util.js';
 
 export default class CartList {
   constructor($target, initialData) {
@@ -7,14 +7,24 @@ export default class CartList {
 
     this.$container = creatElem('ul');
     this.$container.className = 'divide-y divide-gray-200';
+    this.$totalCount = getElem('#total-count');
+    this.totalCount = 0;
 
     this.$target.append(this.$container);
 
     this.render();
   }
 
+  calculateTotalPrice() {
+    this.totalCount = this.state
+      .reduce((acc, cur) => acc + cur.price * cur.count, 0)
+      .toLocaleString();
+  }
+
   setState(newState) {
     this.state = newState;
+
+    this.calculateTotalPrice();
 
     this.render();
   }
@@ -26,6 +36,7 @@ export default class CartList {
   }
 
   render() {
+    this.$totalCount.textContent = this.totalCount + '원';
     this.$container.innerHTML = this.state
       .map(
         (item) => `<li class="flex py-6" id="4">
@@ -43,7 +54,7 @@ export default class CartList {
                     class="flex justify-between text-base font-medium text-gray-900"
                   >
                     <h3>${item.name}</h3>
-                    <p class="ml-4">${item.price.toLocaleString()}</p>
+                    <p class="ml-4">${item.price.toLocaleString()}원</p>
                   </div>
                 </div>
                 <div class="flex flex-1 items-end justify-between">
