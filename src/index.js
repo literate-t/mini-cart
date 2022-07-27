@@ -1,1 +1,11 @@
-// 이 곳에 정답 코드를 작성해주세요.
+import getData from './api/getData.js';
+import ProductList from './component/ProductList.js';
+const $productCardGrid = document.getElementById('product-card-grid');
+const productList = new ProductList($productCardGrid, []);
+
+const fetchData = async () => {
+  const result = await getData();
+  productList.setState(result);
+};
+
+fetchData();
