@@ -1,5 +1,6 @@
 import getData from './api/getData.js';
 import ProductList from './component/ProductList.js';
+import CartList from './component/CartList.js';
 import { getElem } from './util.js';
 
 const $productCardGrid = getElem('#product-card-grid');
@@ -7,44 +8,46 @@ const $openCartBtn = getElem('#open-cart-btn');
 const $closeCartBtn = getElem('#close-cart-btn');
 const $shoppingCart = getElem('#shopping-cart');
 const $backDrop = getElem('#backdrop');
+const $cartList = getElem('#cart-list');
+
+let productData = [];
 
 const productList = new ProductList($productCardGrid, []);
+const cartList = new CartList($cartList, []);
 
 // translate-x-full: 장바구니 닫기 translate-x-0: 장바구니 열기
-const openCartHandler = () => {
-  $shoppingCart.classList.remove('translate-x-full');
-  $shoppingCart.classList.add('translate-x-0');
-  //$backDrop.hidden = !$backDrop.hidden;
-  $backDrop.removeAttribute('hidden');
-};
-
-const closeCartHandler = () => {
-  $shoppingCart.classList.remove('translate-x-0');
-  $shoppingCart.classList.add('translate-x-full');
-  //$backDrop.hidden = !$backDrop.hidden;
-  $backDrop.setAttribute('hidden', '');
+const toggleCartHandler = () => {
+  $shoppingCart.classList.toggle('translate-x-full');
+  $shoppingCart.classList.toggle('translate-x-0');
+  $backDrop.hidden = !$backDrop.hidden;
 };
 
 const backDropHandler = () => {
-  closeCartHandler();
+  toggleCartHandler();
 };
 
-// const productCardGridHandler = (e) => {
-//   const el = e.target.closest('[data-productid]');
-//   if (!el) {
-//     return;
-//   }
-//   openCartHandler();
-// };
+const addItemToCart = (e) => {
+  const el = e.target.closest('[data-productid]');
+  if (el === undefined) {
+    return;
+  }
+
+  const { productid } = el.dataset;
+  const pickedItem = productData.find((product) => product.id == productid); // 둘이 타입이 다름
+  cartList.addItem(pickedItem);
+
+  toggleCartHandler();
+};
 
 const fetchData = async () => {
   const result = await getData();
   productList.setState(result);
+  productData = result;
 };
 
 fetchData();
 
-$openCartBtn.addEventListener('click', openCartHandler);
-$closeCartBtn.addEventListener('click', closeCartHandler);
+$openCartBtn.addEventListener('click', toggleCartHandler);
+$closeCartBtn.addEventListener('click', toggleCartHandler);
 $backDrop.addEventListener('click', backDropHandler);
-$productCardGrid.addEventListener('click', openCartHandler);
+$productCardGrid.addEventListener('click', addItemToCart);
