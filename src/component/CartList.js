@@ -89,6 +89,10 @@ export default class CartList {
     this.setState(newState);
   }
 
+  saveInLocalStorage() {
+    localStorage.setItem('cartList', JSON.stringify(this.state));
+  }
+
   render() {
     this.$totalCount.textContent = this.totalCount + '원';
     this.$container.innerHTML = this.state
