@@ -16,14 +16,10 @@ const productList = new ProductList($productCardGrid, []);
 const cartList = new CartList($cartList, []);
 
 // translate-x-full: 장바구니 닫기 translate-x-0: 장바구니 열기
-const toggleCartHandler = () => {
+const toggleCart = () => {
   $shoppingCart.classList.toggle('translate-x-full');
   $shoppingCart.classList.toggle('translate-x-0');
   $backDrop.hidden = !$backDrop.hidden;
-};
-
-const backDropHandler = () => {
-  toggleCartHandler();
 };
 
 const addItemToCart = (e) => {
@@ -36,14 +32,31 @@ const addItemToCart = (e) => {
   const pickedItem = productData.find((product) => product.id == productid); // 둘이 타입이 다름
   cartList.addItem(pickedItem);
 
-  toggleCartHandler();
+  toggleCart();
 };
 
-const removeItemFromCart = (e) => {
-  if ('remove-btn' === e.target.className) {
-    const $item = e.target.closest('li[id]'); // e.target.closest('li').id
-    cartList.removeItem($item.id);
+const modifyCart = (e) => {
+  const id = parseInt(e.target.closest('li[id]').id); // e.target.closest('li').id
+  switch (e.target.className) {
+    case 'remove-btn':
+      cartList.removeItem(id);
+      return;
+    case 'increase-btn':
+      cartList.increaseItemCount(id);
+      return;
+    case 'decrease-btn':
+      cartList.decreaseItemCount(id);
+      return;
+    default:
+      return;
   }
+  // if ('remove-btn' === e.target.className) {
+  //   cartList.removeItem(id);
+  // } else if ('increase-btn' === e.target.className) {
+  //   cartList.increaseItemCount(id);
+  // } else if ('decrease-btn' === e.target.className) {
+  //   cartList.decreaseItemCount(id);
+  // }
 };
 
 const fetchData = async () => {
@@ -54,8 +67,8 @@ const fetchData = async () => {
 
 fetchData();
 
-$openCartBtn.addEventListener('click', toggleCartHandler);
-$closeCartBtn.addEventListener('click', toggleCartHandler);
-$backDrop.addEventListener('click', backDropHandler);
+$openCartBtn.addEventListener('click', toggleCart);
+$closeCartBtn.addEventListener('click', toggleCart);
+$backDrop.addEventListener('click', toggleCart);
 $productCardGrid.addEventListener('click', addItemToCart);
-$cartList.addEventListener('click', removeItemFromCart);
+$cartList.addEventListener('click', modifyCart);

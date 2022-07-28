@@ -1,5 +1,8 @@
 import { creatElem, getElem } from '../util.js';
 
+const MAX_COUNT = 10;
+const MIN_COUNT = 10;
+
 export default class CartList {
   constructor($target, initialData) {
     this.$target = $target;
@@ -9,6 +12,8 @@ export default class CartList {
     this.$container.className = 'divide-y divide-gray-200';
     this.$totalCount = getElem('#total-count');
     this.totalCount = 0;
+    this.maxCount = 10;
+    this.minCount = 1;
 
     this.$target.append(this.$container);
 
@@ -51,7 +56,35 @@ export default class CartList {
   }
 
   removeItem(id) {
-    const newState = this.state.filter((item) => item.id != id);
+    const newState = this.state.filter((item) => item.id !== id);
+
+    this.setState(newState);
+  }
+
+  increaseItemCount(id) {
+    const newState = [...this.state];
+
+    const selectedIndex = this.state.findIndex((item) => item.id === id);
+
+    if (newState[selectedIndex].count < MAX_COUNT) {
+      newState[selectedIndex].count += 1;
+    } else {
+      alert('장바구니에 담을 수 있는 최대 수량은 10개입니다.');
+    }
+
+    this.setState(newState);
+  }
+
+  decreaseItemCount(id) {
+    const newState = [...this.state];
+
+    const selectedIndex = this.state.findIndex((item) => item.id === id);
+
+    if (MIN_COUNT < newState[selectedIndex].count) {
+      newState[selectedIndex].count -= 1;
+    } else {
+      alert('장바구니에 담을 수 있는 최소 수량은 1개입니다.');
+    }
 
     this.setState(newState);
   }
@@ -75,7 +108,9 @@ export default class CartList {
                     class="flex justify-between text-base font-medium text-gray-900"
                   >
                     <h3>${item.name}</h3>
-                    <p class="ml-4">${item.price.toLocaleString()}원</p>
+                    <p class="ml-4">${(
+                      item.count * item.price
+                    ).toLocaleString()}원</p>
                   </div>
                 </div>
                 <div class="flex flex-1 items-end justify-between">
