@@ -28,7 +28,7 @@ const backDropHandler = () => {
 
 const addItemToCart = (e) => {
   const el = e.target.closest('[data-productid]');
-  if (el === undefined) {
+  if (el === null) {
     return;
   }
 
@@ -37,6 +37,13 @@ const addItemToCart = (e) => {
   cartList.addItem(pickedItem);
 
   toggleCartHandler();
+};
+
+const removeItemFromCart = (e) => {
+  if ('remove-btn' === e.target.className) {
+    const $item = e.target.closest('li[id]'); // e.target.closest('li').id
+    cartList.removeItem($item.id);
+  }
 };
 
 const fetchData = async () => {
@@ -51,3 +58,4 @@ $openCartBtn.addEventListener('click', toggleCartHandler);
 $closeCartBtn.addEventListener('click', toggleCartHandler);
 $backDrop.addEventListener('click', backDropHandler);
 $productCardGrid.addEventListener('click', addItemToCart);
+$cartList.addEventListener('click', removeItemFromCart);

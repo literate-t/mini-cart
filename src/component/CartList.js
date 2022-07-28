@@ -35,11 +35,17 @@ export default class CartList {
     this.setState(newState);
   }
 
+  removeItem(id) {
+    const newState = this.state.filter((item) => item.id != id);
+
+    this.setState(newState);
+  }
+
   render() {
     this.$totalCount.textContent = this.totalCount + '원';
     this.$container.innerHTML = this.state
       .map(
-        (item) => `<li class="flex py-6" id="4">
+        (item) => `<li class="flex py-6" id=${item.id}>
               <div
                 class="h-24 w-24 overflow-hidden rounded-md border border-gray-200"
               >
