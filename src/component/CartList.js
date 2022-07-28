@@ -29,10 +29,25 @@ export default class CartList {
     this.render();
   }
 
-  addItem(item) {
-    const newState = [...this.state, { ...item, count: 1 }];
+  addItem(newItem) {
+    let newState;
+
+    const index = this.isDupicated(newItem);
+
+    if (index === -1) {
+      newState = [...this.state, { ...newItem, count: 1 }];
+    } else {
+      newState = [...this.state];
+      newState[index].count += 1;
+    }
 
     this.setState(newState);
+  }
+
+  isDupicated(newItem) {
+    const index = this.state.findIndex((item) => item.id === newItem.id);
+
+    return index;
   }
 
   removeItem(id) {
